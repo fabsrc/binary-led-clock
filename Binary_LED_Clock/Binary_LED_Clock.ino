@@ -1,10 +1,12 @@
 #include "FastLED.h"
 #include "TimeLib.h"
 
-#define NUM_LEDS 12
-#define DATA_PIN 3
-#define TIME_HEADER  "T"
-#define COLOR_ORDER GRB
+#define FASTLED_ESP8266_NODEMCU_PIN_ORDER
+#define NUM_LEDS      12
+#define DATA_PIN      2
+#define TIME_HEADER   "T"
+#define LED_TYPE      WS2812B
+#define COLOR_ORDER   GRB
 
 CRGB leds[NUM_LEDS];
 
@@ -13,7 +15,7 @@ void setup() {
   
   Serial.begin(9600);
   
-  FastLED.addLeds<WS2812B, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   setTime(DEFAULT_TIME);
 }
 
@@ -50,9 +52,7 @@ void loop() {
   
     leds[5] = CRGB::Orange;
     FastLED.show();
-    delay(500);
-    
-    Serial.println();
+    FastLED.delay(500);
     
     for (int i = 0; i <= 5; i++) {
       char c = minuteString.charAt(i);
@@ -65,7 +65,7 @@ void loop() {
     
     leds[5] = CRGB::Black;
     FastLED.show();
-    delay(500);
+    FastLED.delay(500);
   }
 }
 

@@ -4,7 +4,7 @@
 #include "WiFiUdp.h"
 
 #define FASTLED_ESP8266_NODEMCU_PIN_ORDER
-#define NUM_LEDS      12
+#define NUM_LEDS      17
 #define DATA_PIN      2
 #define TIME_HEADER   "T"
 #define LED_TYPE      WS2812B
@@ -32,64 +32,54 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()) {
-//    processSyncMessage();
+  String hourString = String(hour(), BIN);
+  String minuteString = String(minute(), BIN);
+  String secondString = String(second(), BIN);
 
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB::Red;
-    }
-    FastLED.show();
-  } else {
-    String hourString = String(hour(), BIN);
-    String minuteString = String(minute(), BIN);
+  hourString = zeroPadLeft(hourString, 5);
+  minuteString = zeroPadLeft(minuteString, 6);
+  secondString = zeroPadLeft(secondString, 6);
   
-    hourString = zeroPadLeft(hourString, 5);
-    minuteString = zeroPadLeft(minuteString, 6);
-    
-    Serial.print(hour());
-    Serial.print(":");
-    Serial.print(minute());
-    Serial.println();
+  Serial.print(hour());
+  Serial.print(":");
+  Serial.print(minute());
+  Serial.print(":");
+  Serial.print(second());
+  Serial.println();
 //    Serial.print("(hs " + hourString + "):");
 //    Serial.print("(ms" + minuteString + ")");
 //    Serial.println();
-    for (int i = 0; i <= 4; i++) {
-      char c = hourString.charAt(i);
-      if (c == '1') {
-        leds[i] = CRGB::Red; 
-      } else {
-        leds[i] = CRGB::Black;
-      }
-    }
-  
-    leds[5] = CRGB::Orange;
-    FastLED.show();
-    FastLED.delay(500);
-    
-    for (int i = 0; i <= 5; i++) {
-      char c = minuteString.charAt(i);
-      if (c == '1') {
-        leds[i+6] = CRGB::Green;
-      } else {
-        leds[i+6] = CRGB::Black;
-      }
-    }
-    
-    leds[5] = CRGB::Black;
-    FastLED.show();
-    FastLED.delay(500);
-  }
-}
 
-//void processSyncMessage() {
-//  unsigned long pctime;
-//
-//  if (Serial.find(TIME_HEADER)) {
-//    pctime = Serial.parseInt();
-//    setTime(pctime);
-//    Serial.print("Set Time");
-//  }
-//}
+  for (int i = 0; i <= 4; i++) {
+    char c = hourString.charAt(i);
+    if (c == '1') {
+      leds[i] = CRGB::Red; 
+    } else {
+      leds[i] = CRGB::Black;
+    }
+  }
+  
+  for (int i = 0; i <= 5; i++) {
+    char c = minuteString.charAt(i);
+    if (c == '1') {
+      leds[i+5] = CRGB::Green;
+    } else {
+      leds[i+5] = CRGB::Black;
+    }
+  }
+
+  for (int i = 0; i <= 5; i++) {
+    char c = secondString.charAt(i);
+    if (c == '1') {
+      leds[i+11] = CRGB::Orange;
+    } else {
+      leds[i+11] = CRGB::Black;
+    }
+  }
+
+  FastLED.show();
+  FastLED.delay(1000);
+}
 
 void syncNTPtime() {
   Serial.println("");
